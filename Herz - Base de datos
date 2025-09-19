@@ -1,0 +1,59 @@
+CREATE DATABASE IF NOT EXISTS Herz;
+
+USE Herz;
+
+CREATE TABLE Clientes (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    dni INT,
+    licencia VARCHAR(20),
+    email VARCHAR(100),
+    telefono VARCHAR(20)
+);
+
+CREATE TABLE Sucursales (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    direccion VARCHAR(150),
+    telefono VARCHAR(20)
+);
+
+CREATE TABLE Vehiculos (
+    id INT PRIMARY KEY,
+    patente VARCHAR(10),
+    modelo VARCHAR(50),
+    tipo VARCHAR(50),
+    estado VARCHAR(20),
+    idSucursal INT,
+    kilometraje DECIMAL(10,2),
+    FOREIGN KEY (idSucursal) REFERENCES Sucursales(id)
+);
+
+CREATE TABLE Reservas (
+    id INT PRIMARY KEY,
+    estado VARCHAR(20),
+    idCliente INT,
+    fechaInicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaFin TIMESTAMP NULL,
+    FOREIGN KEY (idCliente) REFERENCES Clientes(id)
+);
+
+CREATE TABLE Alquileres (
+    id INT PRIMARY KEY,
+    idReserva INT,
+    fechaRetiro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaDevolucion TIMESTAMP NULL,
+    kmInicial DECIMAL(10,2),
+    kmFinal DECIMAL(10,2),
+    FOREIGN KEY (idReserva) REFERENCES Reservas(id)
+);
+
+CREATE TABLE Mantenimiento (
+    id INT PRIMARY KEY,
+    idVehiculo INT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tipo VARCHAR(50),
+    costo DECIMAL(10,2),
+    estado VARCHAR(20),
+    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(id)
+);
