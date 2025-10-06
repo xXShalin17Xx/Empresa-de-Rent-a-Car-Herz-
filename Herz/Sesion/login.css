@@ -1,0 +1,177 @@
+* {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, #8b8b8b, #04926f);
+    }
+
+    .box {
+      width: 800px;
+      height: 500px;
+      background: #fff;
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,0.2);
+      transition: all 0.6s ease-in-out;
+    }
+
+    .form-container {
+      width: 50%;
+      padding: 40px;
+      transition: all 0.6s ease-in-out;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-bottom: 2px solid #ccc;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-container input:focus {
+      border-bottom-color: #007bff;
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .switch {
+      width: 50%;
+      background: url('../img/electrico.jpg') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      padding: 30px;
+      transition: all 0.6s ease-in-out;
+    }
+
+    .switch h2 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .switch p {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .switch button {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+/*
+    .register-mode .box {
+      transform: translateX(25%) 
+      
+    }*/
+
+    .register-mode .switch {
+      background: url('../img/azul.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* Mostrar login por defecto */
+.form-container.login {
+  display: block;
+}
+
+.form-container.register {
+  display: none;
+}
+
+/* Cuando está en modo registro */
+.container.register-mode .form-container.login {
+  display: none;
+}
+
+.container.register-mode .form-container.register {
+  display: block;
+}
+
+/*mensajes*/
+
+    .mensaje {
+  margin: 20px auto;
+  padding: 15px;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.mensaje.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.volver-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 999;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+}
+
+.volver-btn:hover {
+    background-color: #222;
+}
+
+
+
+  

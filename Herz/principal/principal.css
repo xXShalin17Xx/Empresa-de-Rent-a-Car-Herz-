@@ -1,0 +1,398 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+:root {
+  --accent: #04926f;
+  --accent-dark: #365a59;
+  --accent-light: #5cd4a1;
+  --background-light: #f2f2f2;
+  --text-dark: #222;
+  --gray-light: #8a9491;
+  --gray-dark: #222;
+  --white: #fff;
+  --shadow-color: rgba(4, 146, 111, 0.35);
+}
+
+body {
+  margin: 0;
+  background: var(--background-light);
+  line-height: 1.6;
+  color: var(--text-dark);
+  text-align: center; 
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 28px;
+  background: var(--accent);
+  color: var(--white);
+  border-bottom: 3px solid var(--accent-dark);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+.main-header .logo {
+  font-size: 26px;
+  font-weight: 700;
+}
+.main-header h1 {
+  font-size: 28px;
+  flex: 1;
+  text-align: center;
+  color: var(--white);
+  font-weight: 600;
+}
+.main-header nav {
+  display: flex;
+  gap: 15px;
+}
+.main-header nav a {
+  color: var(--white);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background: rgba(255 255 255 / 0.1);
+}
+.main-header nav a:hover {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  border-color: var(--white);
+}
+
+
+.hero {
+  max-width: 1200px;
+  margin: 40px auto 60px;
+  padding: 30px 40px;
+  /*background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 6px 15px var(--shadow-color); por si quiero una caja con sombra*/ 
+  text-align: center;
+}
+
+.title-row h2 {
+  margin: 0 0 30px;
+  font-size: 34px;
+  background: linear-gradient(135deg, var(--gray-light), var(--gray-dark));
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 40px;
+  display: inline-block;
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+
+.carousel-wrapper {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  margin-bottom: 25px;
+}
+.carousel {
+  flex: 1;
+  max-width: 900px;
+  height: 420px;
+  overflow: hidden;
+  border: 5px solid var(--accent);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7ca6a4, #4d857e);
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+.slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  cursor: pointer; 
+  border-radius: 12px;
+  overflow: hidden;
+}
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.55);
+  transition: filter 0.3s ease;
+}
+.slide:hover img {
+  filter: brightness(0.75);
+}
+.slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+.slide-caption {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: var(--white);
+  text-shadow: 0 3px 8px rgba(0,0,0,0.8);
+  font-weight: 700;
+  font-size: 34px;
+  user-select: none;
+}
+
+
+.carousel-btn {
+  background: var(--white);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  width: 50px; height: 50px;
+  font-size: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(4,146,111,0.25);
+}
+.carousel-btn:hover {
+  background: var(--accent);
+  color: var(--white);
+  box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+.carousel-dots button {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.carousel-dots button.active {
+  background: var(--accent-dark);
+  box-shadow: 0 0 8px var(--accent-dark);
+}
+
+
+.filters {
+  display: flex;
+  justify-content: center; 
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.filters button {
+  padding: 12px 22px;
+  border: none;
+  background: var(--accent-dark);
+  color: var(--white);
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 6px 12px rgba(4,146,111,0.45);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  user-select: none;
+}
+.filters button:hover {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  transform: scale(1.1);
+  box-shadow: 0 8px 18px rgba(4,146,111,0.7);
+}
+
+
+.descripcion-tipo {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.descripcion {
+  margin-top: 20px;
+  font-size: 18px;
+  color: var(--text-dark);
+  background: var(--white);
+  padding: 20px 25px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-shadow: 0 6px 18px rgba(4,146,111,0.15);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+
+
+.reservas-container {
+  max-width: 900px;
+  background: var(--white);
+  margin: 60px auto 100px;
+  padding: 40px 50px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  border: 3px solid var(--accent);
+  text-align: left;
+  color: var(--text-dark);
+  font-weight: 500;
+  transition: box-shadow 0.4s ease;
+}
+.reservas-container:hover {
+  box-shadow: 0 15px 45px var(--accent-light);
+}
+
+.reservas-container h2 {
+  text-align: center;
+  font-size: 38px;
+  margin-bottom: 40px;
+  color: var(--accent-dark);
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgba(4,146,111,0.4);
+}
+
+.reservas-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px 35px;
+}
+
+.reservas-form label {
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: block;
+  color: var(--accent-dark);
+  letter-spacing: 0.03em;
+}
+
+.reservas-form input,
+.reservas-form select,
+.reservas-form textarea {
+  padding: 14px 18px;
+  border: 2px solid var(--gray-dark);
+  border-radius: 12px;
+  font-size: 17px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  font-family: 'Rajdhani', sans-serif;
+  background: #fefefe;
+  color: var(--text-dark);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.reservas-form input:focus,
+.reservas-form select:focus,
+.reservas-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent-light);
+  outline: none;
+  background: #fff;
+}
+
+.reservas-form textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.reservas-form button {
+  grid-column: span 2;
+  background: var(--accent);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 18px;
+  padding: 16px 0;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(4,146,111,0.45);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reservas-form button:hover {
+  background: var(--accent-dark);
+  transform: scale(1.05);
+}
+
+/* Responsive para reservas */
+@media (max-width: 768px) {
+  .reservas-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .filters button {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+.perfil-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.perfil-icono {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--white);
+    object-fit: cover;
+}
+
+.menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 48px;
+    background-color: var(--accent);
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 12px;
+    display: none;
+    min-width: 160px;
+    z-index: 10;
+    text-align: left;
+    transition: opacity 0.3s ease;
+}
+
+.menu-dropdown.show {
+  display: block;
+  opacity: 1;
+}
+
+.menu-dropdown a, .menu-dropdown span {
+    display: block;
+    color: #333;
+    padding: 8px 10px;
+    text-decoration: none;
+    font-size: 15px;
+    border-radius: 6px;
+}
+
+.menu-dropdown a:hover {
+    background-color: var(--accent-light);
+    color: var(--accent-dark);
+}
+
+.perfil-dropdown:hover .menu-dropdown {
+    display: block;
+}
+
