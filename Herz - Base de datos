@@ -1,59 +1,426 @@
 CREATE DATABASE IF NOT EXISTS Herz;
-
 USE Herz;
 
-CREATE TABLE Clientes (
+-- Tabla de roles
+CREATE TABLE Roles (
     id INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    dni INT,
-    licencia VARCHAR(20),
-    email VARCHAR(100),
-    telefono VARCHAR(20)
+    nombre VARCHAR(50) NOT NULL UNIQUE
 );
 
+-- Tabla de sucursales
 CREATE TABLE Sucursales (
-    id INT PRIMARY KEY,
-    nombre VARCHAR(100),
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(150),
     telefono VARCHAR(20)
 );
 
-CREATE TABLE Vehiculos (
-    id INT PRIMARY KEY,
-    patente VARCHAR(10),
-    modelo VARCHAR(50),
-    tipo VARCHAR(50),
-    estado VARCHAR(20),
-    idSucursal INT,
-    kilometraje DECIMAL(10,2),
+-- Tabla de clientes
+CREATE TABLE Clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    dni VARCHAR(15) NOT NULL UNIQUE,
+    licencia VARCHAR(20),
+    email VARCHAR(100) UNIQUE,
+    telefono VARCHAR(20),
+    contrasena VARCHAR(255) NOT NULL,
+    fechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    idRol INT DEFAULT 1,  -- Por defecto, cliente
+    idSucursal INT NULL,  -- Solo aplica a empleados
+    FOREIGN KEY (idRol) REFERENCES Roles(id),
     FOREIGN KEY (idSucursal) REFERENCES Sucursales(id)
 );
 
-CREATE TABLE Reservas (
-    id INT PRIMARY KEY,
-    estado VARCHAR(20),
-    idCliente INT,
-    fechaInicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fechaFin TIMESTAMP NULL,
-    FOREIGN KEY (idCliente) REFERENCES Clientes(id)
+
+-- Tabla de vehículos
+CREATE TABLE Vehiculos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patente VARCHAR(10) NOT NULL UNIQUE,
+    modelo VARCHAR(50),
+    tipo VARCHAR(50), 
+    estado ENUM('disponible', 'alquilado', 'mantenimiento') DEFAULT 'disponible',
+    idSucursal INT,
+    kilometraje DECIMAL(10,2) DEFAULT 0,
+    FOREIGN KEY (idSucursal) REFERENCES Sucursales(id)
 );
 
+-- Tabla de reservas
+CREATE TABLE Reservas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    estado ENUM('pendiente', 'en curso', 'finalizada', 'cancelada') DEFAULT 'pendiente',
+    idSucursal INT,
+    idCliente INT,
+    idVehiculo INT,
+    tipoVehiculo VARCHAR(50), 
+    fechaInicio DATE,
+    fechaFin DATE,
+    FOREIGN KEY (idCliente) REFERENCES Clientes(id),
+    FOREIGN KEY (idSucursal) REFERENCES Sucursales(id),
+    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(id)
+    
+);
+
+
+
+-- Tabla de alquileres 
 CREATE TABLE Alquileres (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     idReserva INT,
     fechaRetiro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fechaDevolucion TIMESTAMP NULL,
     kmInicial DECIMAL(10,2),
     kmFinal DECIMAL(10,2),
-    FOREIGN KEY (idReserva) REFERENCES Reservas(id)
-);
-
-CREATE TABLE Mantenimiento (
-    id INT PRIMARY KEY,
     idVehiculo INT,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    tipo VARCHAR(50),
-    costo DECIMAL(10,2),
-    estado VARCHAR(20),
+    estado ENUM('en curso', 'finalizado', 'cancelado') DEFAULT 'en curso',
+    FOREIGN KEY (idReserva) REFERENCES Reservas(id) ON DELETE CASCADE,
     FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(id)
 );
+
+
+-- Tabla de mantenimiento
+CREATE TABLE Mantenimiento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idVehiculo INT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tipo VARCHAR(50), -- ej: cambio de aceite, revisión, etc.
+    costo DECIMAL(10,2),
+    estado ENUM('pendiente', 'completado') DEFAULT 'pendiente',
+    fechaCompletado DATETIME DEFAULT NULL,
+    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(id)
+);
+
+
+
+
+INSERT INTO Roles (id, nombre) VALUES
+(1, 'cliente'),
+(2, 'empleado_sucursal'),
+(3, 'coordinador_flotas'),
+(4, 'personal_mantenimiento'),
+(5, 'admin');
+
+
+
+-- para cambiar los roles de los usuarios manualmente
+UPDATE Clientes
+SET idRol = 3
+WHERE id = 5;
+
+--  Económicos
+INSERT INTO Vehiculos (patente, modelo, tipo, estado, idSucursal, kilometraje) VALUES
+('AB123CD', 'Toyota Yaris', 'Económico', 'disponible', 1, 25300.75),
+('CD234EF', 'Hyundai i10', 'Económico', 'disponible', 1, 18750.20),
+('EF345GH', 'Kia Picanto', 'Económico', 'mantenimiento', 1, 32100.50),
+('GH456IJ', 'Chevrolet Spark', 'Económico', 'disponible', 1, 29450.10),
+('IJ567KL', 'Nissan March', 'Económico', 'alquilado', 1, 36890.00);
+
+--  Eléctricos
+INSERT INTO Vehiculos (patente, modelo, tipo, estado, idSucursal, kilometraje) VALUES
+('EL101AA', 'Tesla Model 3', 'Eléctrico', 'disponible', 1, 10500.00),
+('EL202BB', 'Nissan Leaf', 'Eléctrico', 'disponible', 1, 8800.30),
+('EL303CC', 'BMW i3', 'Eléctrico', 'alquilado', 1, 7600.00),
+('EL404DD', 'Renault Zoe', 'Eléctrico', 'disponible', 1, 4950.70),
+('EL505EE', 'Hyundai Kona Electric', 'Eléctrico', 'mantenimiento', 1, 6200.40);
+
+--  SUV
+INSERT INTO Vehiculos (patente, modelo, tipo, estado, idSucursal, kilometraje) VALUES
+('SUV111AA', 'Toyota RAV4', 'SUV', 'disponible', 1, 45000.00),
+('SUV222BB', 'Ford Escape', 'SUV', 'disponible', 1, 39200.55),
+('SUV333CC', 'Honda CR-V', 'SUV', 'alquilado', 1, 41750.90),
+('SUV444DD', 'Kia Sportage', 'SUV', 'mantenimiento', 1, 46230.20),
+('SUV555EE', 'Hyundai Tucson', 'SUV', 'disponible', 1, 38500.00);
+
+--  De lujo
+INSERT INTO Vehiculos (patente, modelo, tipo, estado, idSucursal, kilometraje) VALUES
+('LUX111AA', 'Mercedes-Benz C-Class', 'De lujo', 'disponible', 1, 21400.00),
+('LUX222BB', 'BMW 5 Series', 'De lujo', 'disponible', 1, 19850.00),
+('LUX333CC', 'Audi A6', 'De lujo', 'alquilado', 1, 23500.80),
+('LUX444DD', 'Lexus ES 350', 'De lujo', 'disponible', 1, 17200.10),
+('LUX555EE', 'Jaguar XF', 'De lujo', 'mantenimiento', 1, 26500.65);
+
+-- sucursales
+INSERT INTO Sucursales (nombre, direccion, telefono) VALUES
+('Sucursal Palermo', 'Av. Santa Fe 3456, Palermo, CABA', '011-4321-1000'),
+('Sucursal Caballito', 'Av. Rivadavia 5400, Caballito, CABA', '011-4321-1001'),
+('Sucursal Belgrano', 'Juramento 2345, Belgrano, CABA', '011-4321-1002'),
+('Sucursal Recoleta', 'Av. Callao 1500, Recoleta, CABA', '011-4321-1003'),
+('Sucursal Constitución', 'Lima 800, Constitución, CABA', '011-4321-1004');
+
+
+--1 (procesar_reserva.php)
+DELIMITER //
+CREATE PROCEDURE sp_ProcesarReserva (
+    IN p_nombre VARCHAR(100),
+    IN p_email VARCHAR(100),
+    IN p_tipoVehiculo VARCHAR(50),
+    IN p_fechaInicio DATETIME,
+    IN p_fechaFin DATETIME,
+    IN p_idSucursal INT
+)
+BEGIN
+    DECLARE v_idCliente INT;
+
+    -- Buscar el cliente por nombre y email
+    SELECT id INTO v_idCliente
+    FROM Clientes
+    WHERE nombre = p_nombre AND email = p_email
+    LIMIT 1;
+
+    IF v_idCliente IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cliente no encontrado. Asegúrese de estar registrado.';
+    ELSE
+        INSERT INTO Reservas (estado, idCliente, tipoVehiculo, fechaInicio, fechaFin, idSucursal)
+        VALUES ('pendiente', v_idCliente, p_tipoVehiculo, p_fechaInicio, p_fechaFin, p_idSucursal);
+    END IF;
+END //
+DELIMITER ;
+
+
+---2 (procesar_retiro.php)
+DELIMITER //
+
+CREATE PROCEDURE sp_ProcesarRetiroAuto (
+    IN p_idReserva INT
+)
+BEGIN
+    DECLARE v_tipoVehiculo VARCHAR(50);
+    DECLARE v_idSucursal INT;
+    DECLARE v_idVehiculo INT;
+    DECLARE v_kmInicial DECIMAL(10,2);
+    DECLARE v_count INT;
+    DECLARE exit handler for sqlexception 
+    BEGIN
+        -- Si ocurre un error, se revierte todo
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error interno al procesar el retiro.';
+    END;
+
+    START TRANSACTION;
+
+    SELECT tipoVehiculo, idSucursal
+    INTO v_tipoVehiculo, v_idSucursal
+    FROM Reservas
+    WHERE id = p_idReserva AND estado = 'pendiente'
+    LIMIT 1;
+
+    IF v_tipoVehiculo IS NULL THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' 
+            SET MESSAGE_TEXT = 'Reserva no encontrada o ya confirmada.';
+    END IF;
+
+    SELECT id, kilometraje
+    INTO v_idVehiculo, v_kmInicial
+    FROM Vehiculos
+    WHERE tipo = v_tipoVehiculo
+      AND idSucursal = v_idSucursal
+      AND estado = 'disponible'
+    LIMIT 1;
+
+    IF v_idVehiculo IS NULL THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' 
+            SET MESSAGE_TEXT = 'No hay vehículos disponibles de este tipo en la sucursal.';
+    END IF;
+
+    INSERT INTO Alquileres (idReserva, idVehiculo, fechaRetiro, kmInicial)
+    VALUES (p_idReserva, v_idVehiculo, NOW(), v_kmInicial);
+
+    UPDATE Vehiculos
+    SET estado = 'alquilado'
+    WHERE id = v_idVehiculo;
+
+    
+    UPDATE Reservas
+    SET estado = 'en curso',
+        idVehiculo = v_idVehiculo
+    WHERE id = p_idReserva;
+
+    COMMIT;
+END //
+
+DELIMITER ;
+
+
+--3 (devolucion.php)
+DELIMITER //
+
+CREATE PROCEDURE sp_RegistrarDevolucionVehiculo (
+    IN p_idAlquiler INT,
+    IN p_kmFinal DECIMAL(10,2),
+    IN p_danios TEXT
+)
+BEGIN
+    DECLARE v_idVehiculo INT;
+    DECLARE v_idReserva INT;
+    DECLARE v_kmInicial DECIMAL(10,2);
+    DECLARE v_totalKm DECIMAL(10,2);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error al registrar la devolución.';
+    END;
+
+    START TRANSACTION;
+r
+    SELECT idVehiculo, idReserva, kmInicial
+    INTO v_idVehiculo, v_idReserva, v_kmInicial
+    FROM Alquileres
+    WHERE id = p_idAlquiler
+    LIMIT 1;
+
+    IF v_idVehiculo IS NULL THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Alquiler no encontrado.';
+    END IF;
+
+    UPDATE Alquileres
+    SET fechaDevolucion = NOW(),
+        kmFinal = p_kmFinal,
+        estado = 'finalizado'
+    WHERE id = p_idAlquiler;
+
+    UPDATE Vehiculos
+    SET estado = 'disponible',
+        kilometraje = p_kmFinal
+    WHERE id = v_idVehiculo;
+
+    UPDATE Reservas
+    SET estado = 'finalizada'
+    WHERE id = v_idReserva;
+
+    IF p_danios IS NOT NULL AND p_danios != '' THEN
+        INSERT INTO Mantenimiento (idVehiculo, tipo, costo, estado)
+        VALUES (v_idVehiculo, p_danios, 0, 'pendiente');
+    END IF;
+
+    COMMIT;
+END //
+
+DELIMITER ;
+
+--4 (mis_alquileres) SP cancelacion
+
+DELIMITER //
+CREATE PROCEDURE sp_CancelarReserva(IN p_idReserva INT, IN p_idCliente INT)
+BEGIN
+    DECLARE vEstadoActual VARCHAR(20);
+
+    -- Verificar que la reserva existe y pertenece al cliente
+    SELECT estado INTO vEstadoActual
+    FROM Reservas
+    WHERE id = p_idReserva AND idCliente = p_idCliente;
+
+    IF vEstadoActual IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La reserva no existe o no pertenece al cliente';
+    ELSEIF vEstadoActual NOT IN ('pendiente', 'confirmada') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La reserva no puede cancelarse';
+    ELSE
+        UPDATE Reservas 
+        SET estado = 'cancelada'
+        WHERE id = p_idReserva;
+    END IF;
+END //
+DELIMITER ;
+
+
+
+--5 mis alquileres
+DELIMITER //
+
+CREATE PROCEDURE sp_HistorialAlquileresPorCliente (IN p_idCliente INT)
+BEGIN
+    SELECT 
+        A.id AS idAlquiler,
+        R.id AS idReserva,
+        V.modelo,
+        V.patente,
+        S.nombre AS sucursal,
+        A.fechaRetiro,
+        A.fechaDevolucion,
+        A.kmInicial,
+        A.kmFinal,
+        R.estado AS estadoReserva
+    FROM Alquileres A
+        INNER JOIN Reservas R ON A.idReserva = R.id
+        INNER JOIN Vehiculos V ON A.idVehiculo = V.id
+        LEFT JOIN Sucursales S ON V.idSucursal = S.id
+    WHERE R.idCliente = p_idCliente
+    ORDER BY A.fechaRetiro DESC;
+END //
+
+DELIMITER ;
+
+
+--trg
+
+DELIMITER //
+
+CREATE TRIGGER trg_ActualizarEstadoVehiculo_AlRetirar
+AFTER INSERT ON Alquileres
+FOR EACH ROW
+BEGIN
+    -- Cambia el estado del vehículo a 'alquilado' cuando se crea un alquiler
+    UPDATE Vehiculos 
+    SET estado = 'alquilado' 
+    WHERE id = NEW.idVehiculo;
+END //
+
+DELIMITER ;
+
+
+--2 
+DELIMITER //
+
+CREATE TRIGGER trg_ActualizarEstadoVehiculo_AlDevolver
+AFTER UPDATE ON Alquileres
+FOR EACH ROW
+BEGIN
+    -- Cambia el estado a 'disponible' solo si antes no estaba devuelto
+    IF NEW.fechaDevolucion IS NOT NULL AND OLD.fechaDevolucion IS NULL THEN
+        UPDATE Vehiculos 
+        SET estado = 'disponible' 
+        WHERE id = NEW.idVehiculo;
+    END IF;
+END //
+
+DELIMITER ;
+
+
+--3
+DELIMITER //
+
+CREATE TRIGGER trg_RegistrarMantenimiento_Agregado
+AFTER INSERT ON Mantenimiento
+FOR EACH ROW
+BEGIN
+    -- Cambia el estado del vehículo a 'mantenimiento' cuando se crea un registro de mantenimiento
+    UPDATE Vehiculos 
+    SET estado = 'mantenimiento' 
+    WHERE id = NEW.idVehiculo;
+END //
+
+DELIMITER ;
+
+
+--4 
+DELIMITER //
+
+CREATE TRIGGER trg_FinalizarMantenimiento
+AFTER UPDATE ON Mantenimiento
+FOR EACH ROW
+BEGIN
+    -- Si el mantenimiento se marca como 'completado', vuelve el vehículo a 'disponible'
+    IF NEW.estado = 'completado' AND OLD.estado != 'completado' THEN
+        UPDATE Vehiculos 
+        SET estado = 'disponible' 
+        WHERE id = NEW.idVehiculo;
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
